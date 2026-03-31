@@ -1,24 +1,20 @@
-<nav class="navbar">
+<nav class="navbar" *ngIf="currentUser$ | async as user">
   <div class="navbar__brand">
     <span class="navbar__logo">📡</span>
     <span class="navbar__name">PriceRadar</span>
   </div>
 
   <div class="navbar__links">
-    <a routerLink="/dashboard" routerLinkActive="active">
-      Dashboard
-    </a>
-    <a routerLink="/alerts" routerLinkActive="active">
-      Alertas
-    </a>
-    <a *ngIf="isAdmin" routerLink="/admin" routerLinkActive="active">
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/alerts" routerLinkActive="active">Alertas</a>
+    <a *ngIf="user.role === 'admin'" routerLink="/admin" routerLinkActive="active">
       Admin
     </a>
   </div>
 
   <div class="navbar__user">
-    <span class="navbar__username">{{ currentUser?.username }}</span>
-    <span class="badge badge-accent">{{ currentUser?.role }}</span>
+    <span class="navbar__username">{{ user.username }}</span>
+    <span class="badge badge-accent">{{ user.role }}</span>
     <button class="btn btn-ghost" (click)="logout()">Salir</button>
   </div>
 </nav>

@@ -1,1 +1,102 @@
-<p>admin works!</p>
+<div class="page">
+  <h1 class="page-title">Panel de Administración</h1>
+
+  <!-- Formulario agregar producto -->
+  <div class="card add-form">
+    <h2>Agregar Criptomoneda</h2>
+    <p class="text-muted">
+      Usa el ID de CoinGecko. Ejemplos:
+      <code>bitcoin</code>, <code>ethereum</code>, <code>solana</code>
+    </p>
+
+    <div class="add-form__row">
+      <input
+        class="input"
+        type="text"
+        [(ngModel)]="newCoinId"
+        name="coinId"
+        placeholder="ej: bitcoin"
+        (keyup.enter)="addProduct()"
+      />
+      <button
+        class="btn btn-primary"
+        (click)="addProduct()"
+        [disabled]="addLoading"
+      >
+        {{ addLoading ? 'Agregando...' : '+ Agregar' }}
+      </button>
+    </div>
+
+    <div class="form-error" *ngIf="addError">⚠️ {{ addError }}</div>
+    <div class="form-success" *ngIf="addSuccess">✅ {{ addSuccess }}</div>
+  </div>
+
+  <!-- Tabla de productos -->
+  <div class="card">
+    <h2>Productos Registrados</h2>
+
+    <div class="empty-state" *ngIf="products.length === 0">
+      <span>📭</span>
+      <p>No hay productos registrados.</p>
+    </div>
+
+    <table class="products-table" *ngIf="products.length > 0">
+      <thead>
+        <tr>
+          <th>Coin ID</th>
+          <th>Nombre</th>
+          <th>Símbolo</th>
+          <th>Precio Actual</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+
+          <!-- Modo normal -->
+          <ng-container *ngIf="editingId !== product.id">
+            <td><span class="badge badge-accent">{{ product.coin_id }}</span></td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.symbol }}</td>
+            <td class="price">{{ formatPrice(product.current_price) }}</td>
+            <td class="actions">
+              <button class="btn btn-ghost" (click)="startEdit(product)">
+                ✏️ Editar
+              </button>
+              <button class="btn btn-danger" (click)="deleteProduct(product.id, product.name)">
+                🗑️ Eliminar
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Modo edición -->
+          <ng-container *ngIf="editingId === product.id">
+            <td><span class="badge badge-accent">{{ product.coin_id }}</span></td>
+            <td>
+              <input class="input input-sm" [(ngModel)]="editName" name="editName" />
+            </td>
+            <td>
+              <input class="input input-sm" [(ngModel)]="editSymbol" name="editSymbol" />
+            </td>
+            <td class="price">{{ formatPrice(product.current_price) }}</td>
+            <td class="actions">
+              <button
+                class="btn btn-primary"
+                (click)="saveEdit(product.id)"
+                [disabled]="editLoading"
+              >
+                {{ editLoading ? '...' : '✅ Guardar' }}
+              </button>
+              <button class="btn btn-ghost" (click)="cancelEdit()">
+                Cancelar
+              </button>
+            </td>
+          </ng-container>
+
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="edit-error" *ngIf="editError">⚠️ {{ editError }}</div>
+  </div>
+</div>

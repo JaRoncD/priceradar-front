@@ -1,1 +1,98 @@
-<p>alerts works!</p>
+<div class="page">
+  <h1 class="page-title">Mis Alertas</h1>
+
+  <!-- Formulario nueva alerta -->
+  <div class="card alert-form">
+    <h2>Nueva Alerta</h2>
+
+    <div class="alert-form__fields">
+
+      <div class="form-group">
+        <label>Criptomoneda</label>
+        <select
+          class="input"
+          [(ngModel)]="selectedProductId"
+          name="product"
+        >
+          <option [value]="null" disabled>Selecciona una cripto</option>
+          <option *ngFor="let p of products" [value]="p.id">
+            {{ p.name }} ({{ p.symbol }})
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Condición</label>
+        <select class="input" [(ngModel)]="condition" name="condition">
+          <option value="below">Baja de</option>
+          <option value="above">Sube de</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Precio objetivo (USD)</label>
+        <input
+          class="input"
+          type="number"
+          [(ngModel)]="targetPrice"
+          name="targetPrice"
+          placeholder="ej: 60000"
+        />
+      </div>
+
+    </div>
+
+    <div class="alert-form__error" *ngIf="error">⚠️ {{ error }}</div>
+    <div class="alert-form__success" *ngIf="success">✅ {{ success }}</div>
+
+    <button
+      class="btn btn-primary"
+      (click)="createAlert()"
+      [disabled]="loading"
+    >
+      {{ loading ? 'Creando...' : '+ Crear Alerta' }}
+    </button>
+  </div>
+
+  <!-- Lista de alertas -->
+  <div class="alerts-list">
+
+    <div class="empty-state card" *ngIf="alerts.length === 0">
+      <span>🔔</span>
+      <p>No tienes alertas configuradas.</p>
+    </div>
+
+    <div class="alert-item card" *ngFor="let alert of alerts">
+      <div class="alert-item__info">
+        <span class="alert-item__name">{{ getProductName(alert.product_id) }}</span>
+        <span class="text-muted">
+          {{ alert.condition === 'below' ? 'Baja de' : 'Sube de' }}
+          <strong>{{ formatPrice(alert.target_price) }}</strong>
+        </span>
+      </div>
+
+      <div class="alert-item__right">
+        <span
+          class="badge"
+          [class.badge-success]="alert.is_active"
+          [class.badge-danger]="!alert.is_active"
+        >
+          {{ alert.is_active ? 'Activa' : 'Disparada' }}
+        </span>
+
+        <span *ngIf="alert.triggered_at" class="text-muted" style="font-size:12px">
+          {{ alert.triggered_at | date:'dd/MM HH:mm' }}
+        </span>
+
+        <button
+          class="btn btn-danger"
+          (click)="deleteAlert(alert.id)"
+          *ngIf="alert.is_active"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

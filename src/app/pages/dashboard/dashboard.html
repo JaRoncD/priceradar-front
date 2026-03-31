@@ -1,1 +1,39 @@
-<p>dashboard works!</p>
+<div class="page">
+  <div class="dashboard-header">
+    <h1 class="page-title">Dashboard</h1>
+    <span class="ws-status" [class.connected]="connected">
+      <span class="ws-dot"></span>
+      {{ connected ? 'En vivo' : 'Desconectado' }}
+    </span>
+  </div>
+
+  <!-- Sin productos -->
+  <div class="empty-state card" *ngIf="prices.length === 0">
+    <span>📭</span>
+    <p>Conectando a precios en tiempo real...</p>
+  </div>
+
+  <!-- Grid de precios -->
+  <div class="prices-grid" *ngIf="prices.length > 0">
+    <div class="price-card card" *ngFor="let price of prices">
+      <div class="price-card__header">
+        <div class="price-card__info">
+          <span class="price-card__symbol">{{ price.symbol }}</span>
+          <span class="price-card__name text-muted">{{ price.name }}</span>
+        </div>
+        <span class="badge badge-accent">{{ price.coin_id }}</span>
+      </div>
+
+      <div class="price-card__price">
+        {{ formatPrice(price.price) }}
+      </div>
+
+      <div class="price-card__footer text-muted">
+        <span>Actualizado:</span>
+        <span>
+          {{ price.last_updated ? (price.last_updated | date:'HH:mm:ss') : '—' }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
